@@ -1,3 +1,4 @@
+import os
 import time
 import json
 import uuid
@@ -5,7 +6,8 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.core.exceptions import AppException
 from app.core.security import decode_access_token
@@ -105,4 +107,29 @@ def health_check():
 
 # Mount API V1 routes
 app.include_router(api_router, prefix=settings.API_V1_PREFIX)
+
+# Serve Frontend SPA in unified deployment
+STATIC_DIRS = [
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist")),
+    os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static")),
+    os.path.abspath("static"),
+    os.path.abspath("frontend/dist"),
+]
+
+frontend_dist = next(
+    (d for d in STATIC_DIRS if os.path.isdir(d) and os.path.isfile(os.path.join(d, "index.html"))),
+    None
+)
+
+if frontend_dist:
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.isdir(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        file_path = os.path.join(frontend_dist, full_path)
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))
 

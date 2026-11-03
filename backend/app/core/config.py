@@ -34,6 +34,12 @@ class Settings(BaseSettings):
     
     @model_validator(mode="after")
     def validate_production_security(self) -> "Settings":
+        # Normalize postgres / postgresql URLs to use psycopg2 driver
+        if self.DATABASE_URL.startswith("postgres://"):
+            self.DATABASE_URL = self.DATABASE_URL.replace("postgres://", "postgresql+psycopg2://", 1)
+        elif self.DATABASE_URL.startswith("postgresql://") and not self.DATABASE_URL.startswith("postgresql+"):
+            self.DATABASE_URL = self.DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+
         if self.ENVIRONMENT.lower() == "production":
             if (
                 not self.SECRET_KEY
