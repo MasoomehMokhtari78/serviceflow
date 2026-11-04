@@ -74,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('serviceflow_restaurant_name');
   };
 
-  const hasRole = (role: RoleEnum) => user?.role === role;
+  const hasRole = (role: RoleEnum) => user?.role?.toLowerCase() === role?.toLowerCase();
 
   return (
     <AuthContext.Provider

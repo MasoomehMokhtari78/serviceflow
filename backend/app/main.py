@@ -12,6 +12,7 @@ from app.core.config import settings
 from app.core.exceptions import AppException
 from app.core.security import decode_access_token
 from app.api.router import api_router
+from app.api.docs import router as docs_router
 
 # Configure root logger
 logging.basicConfig(
@@ -33,8 +34,13 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
     description="Multi-Branch Café Operations & Service Intelligence Platform for the Iranian Market",
-    lifespan=lifespan
+    lifespan=lifespan,
+    docs_url=None,
+    redoc_url=None
 )
+
+# Mount Offline API Documentation (Zero external CDN dependencies)
+app.include_router(docs_router)
 
 # CORS Middleware (Explicit origins only; no wildcard in credentials mode)
 app.add_middleware(

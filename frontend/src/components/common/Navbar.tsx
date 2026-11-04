@@ -24,14 +24,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   branchName
 }) => {
   const { user, restaurantName, logout } = useAuth();
+  const role = user?.role?.toLowerCase();
 
   const getRoleBadge = () => {
-    switch (user?.role) {
-      case 'WAITER':
+    switch (role) {
+      case 'waiter':
         return { label: 'گارسون / سالن‌کار', bg: 'bg-amber-900/40 text-amber-300 border-amber-700/50' };
-      case 'KITCHEN':
+      case 'kitchen':
         return { label: 'آشپزخانه و بار (KDS)', bg: 'bg-blue-900/40 text-blue-300 border-blue-700/50' };
-      case 'MANAGER':
+      case 'manager':
         return { label: 'مدیر مجموعه', bg: 'bg-emerald-900/40 text-emerald-300 border-emerald-700/50' };
       default:
         return { label: user?.role || '', bg: 'bg-stone-800 text-stone-300 border-stone-700' };
@@ -71,7 +72,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Role Navigation */}
           <nav className="flex items-center space-x-1 sm:space-x-2 space-x-reverse">
-            {(user?.role === 'WAITER' || user?.role === 'MANAGER') && (
+            {(role === 'waiter' || role === 'manager') && (
               <button
                 onClick={() => onTabChange('orders')}
                 className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center transition-colors ${
@@ -85,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {(user?.role === 'KITCHEN' || user?.role === 'MANAGER') && (
+            {(role === 'kitchen' || role === 'manager') && (
               <button
                 onClick={() => onTabChange('kitchen')}
                 className={`px-3 py-2 rounded-lg text-sm font-medium flex items-center transition-colors ${
@@ -99,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
-            {user?.role === 'MANAGER' && (
+            {role === 'manager' && (
               <>
                 <button
                   onClick={() => onTabChange('metrics')}

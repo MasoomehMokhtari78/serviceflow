@@ -122,7 +122,7 @@ export const KitchenQueue: React.FC<KitchenQueueProps> = ({ branchId }) => {
 
         <div className="flex items-center space-x-2 space-x-reverse">
           {/* Station Selector: enabled for managers, or locked to assigned for kitchen */}
-          {user?.role === 'MANAGER' ? (
+          {user?.role?.toLowerCase() === 'manager' ? (
             <select
               value={selectedStationId}
               onChange={(e) => setSelectedStationId(e.target.value)}

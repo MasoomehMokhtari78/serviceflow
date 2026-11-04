@@ -23,11 +23,10 @@ export const AppContent: React.FC = () => {
   // Set initial tab based on role
   useEffect(() => {
     if (user) {
-      if (user.role === 'KITCHEN') {
+      const userRole = user.role?.toLowerCase();
+      if (userRole === 'kitchen') {
         setCurrentTab('kitchen');
-      } else if (user.role === 'WAITER') {
-        setCurrentTab('orders');
-      } else if (user.role === 'MANAGER') {
+      } else if (userRole === 'waiter' || userRole === 'manager') {
         setCurrentTab('orders');
       }
     }
@@ -86,7 +85,7 @@ export const AppContent: React.FC = () => {
       />
 
       {/* Manager Branch Switcher (if user is manager) */}
-      {user.role === 'MANAGER' && branches.length > 1 && (
+      {user.role?.toLowerCase() === 'manager' && branches.length > 1 && (
         <div className="bg-stone-900/60 border-b border-stone-800/80 px-4 py-2">
           <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
             <span className="text-stone-400 flex items-center">
